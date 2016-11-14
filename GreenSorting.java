@@ -112,7 +112,7 @@ public class GreenSorting {
     		return a;
     	
     	int mid = a.length / 2;
-    	Comparable[] b = split(a, 0, mid-1);
+    	Comparable[] b = split(a, 0, mid);
     	Comparable[] c = split(a, mid, a.length-1);
     	
     	b = mergesortReturn(b);
@@ -124,10 +124,14 @@ public class GreenSorting {
     @SuppressWarnings("rawtypes")
 	public static Comparable[] split(Comparable[] a, int min, int max)
     {
-    	int size = max - min + 1;
+    	int size = max - min;
+	int k = 0;
     	Comparable[] d = new Comparable[size];
-    	for(int i = min; i < size -1; i++)
-    		d[i] = a[i];
+    	for(int i = min; i < max; i++)
+	{    
+    		d[k] = a[i];
+		k++;
+	}
     	return d;
     }
     
