@@ -113,7 +113,7 @@ public class GreenSorting {
     	
     	int mid = a.length / 2;
     	Comparable[] b = split(a, 0, mid);
-    	Comparable[] c = split(a, mid, a.length-1);
+    	Comparable[] c = split(a, mid, a.length);
     	
     	b = mergesortReturn(b);
     	c = mergesortReturn(c);
