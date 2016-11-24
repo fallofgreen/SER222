@@ -54,9 +54,18 @@ public abstract class ArrayList<T> implements ListADT<T>, Iterable<T>
      * @throws EmptyCollectionException if the element is not in the list
      */
     @Override
-    public T removeLast() throws EmptyCollectionException
+    public T removeLast () throws EmptyCollectionException
     {
-        //TODO: Implement this.
+       T result;
+
+       if (isEmpty())
+          throw new EmptyCollectionException ("list");
+
+       rear--;
+       result = list[rear];
+       list[rear] = null;
+
+       return result;
     }
 
     /**
@@ -68,7 +77,19 @@ public abstract class ArrayList<T> implements ListADT<T>, Iterable<T>
     @Override
     public T removeFirst() throws EmptyCollectionException
     {
-        //TODO: Implement this.
+       if (isEmpty())
+          throw new EmptyCollectionException ("list");
+
+       T result = list[0];
+       rear--;
+       // shift the elements
+       for (int scan=0; scan < rear; scan++)
+          list[scan] = list[scan+1];
+
+  
+       list[rear] = null;
+  
+       return result;
     }
 
     /**

@@ -31,9 +31,17 @@ public class ArrayUnorderedList<T> extends ArrayList<T>
      * @param element the element to be added to the front of the list
      */
     @Override
-    public void addToFront(T element)
+    public void addToFront (T element)
     {
-        // TODO: Implement this.
+       if (size() == list.length)
+          expandCapacity();
+
+       // shift elements to make room
+       for (int scan=rear; scan > 0; scan--)
+          list[scan] = list[scan-1];
+
+       list[0] = element;
+       rear++;
     }
 
     /**
@@ -42,9 +50,13 @@ public class ArrayUnorderedList<T> extends ArrayList<T>
      * @param element the element to be added to the list
      */
     @Override
-    public void addToRear(T element)
+    public void addToRear (T element)
     {
-        // TODO: Implement this.
+       if (size() == list.length)
+          expandCapacity();
+
+       list[rear] = element;
+       rear++;
     }
 
     /**

@@ -6,7 +6,7 @@ import java.util.*;
  * @author Lewis and Chase
  * @version 4.0
  */
-public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
+public class LinkedBinaryTree<T extends Comparable<T>> implements BinaryTreeADT<T>, Iterable<T>
 {
     protected BinaryTreeNode<T> root; 
     protected int modCount;
@@ -26,7 +26,7 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
      */
     public LinkedBinaryTree(T element) 
     {
-        root = new BinaryTreeNode<>(element);
+        root = new BinaryTreeNode<T>(element);
     }
     
     /**
@@ -40,7 +40,7 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
     public LinkedBinaryTree(T element, LinkedBinaryTree<T> left, 
                             LinkedBinaryTree<T> right) 
     {
-        root = new BinaryTreeNode<>(element);
+        root = new BinaryTreeNode<T>(element);
         root.setLeft(left.root);
         root.setRight(right.root);
     }
@@ -54,7 +54,9 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
     @Override
     public T getRootElement() throws EmptyCollectionException
     {
-        // TODO: Implement this.
+        if(root == null)
+        	throw new EmptyCollectionException("tree");
+        return root.element;
     }
     
     /**
@@ -65,17 +67,28 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
      */
     protected BinaryTreeNode<T> getRootNode() throws EmptyCollectionException
     {
-        // TODO: Implement this.
+        if(root == null)
+        	throw new EmptyCollectionException("tree");
+        return root;
     }
     
     /**
      * Returns the left subtree of the root of this tree.
      *
-     * @return a link to the left subtree fo the tree
+     * @return a link to the left subtree of the tree
      */
     public LinkedBinaryTree<T> getLeft()
     {
-        // TODO: Implement this.
+    	
+        if(root.left == null)
+        	return null;
+        
+        LinkedBinaryTree<T> leftTree = new LinkedBinaryTree<T>(
+        				root.left.element, 
+        				this.getLeft().getLeft(), 
+        				this.getLeft().getRight());
+        
+        return leftTree;
     }
     
     /**
@@ -85,7 +98,15 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
      */
     public LinkedBinaryTree<T> getRight()
     {
-        // TODO: Implement this.
+    	if(root.right == null)
+        	return null;
+        
+        LinkedBinaryTree<T> rightTree = new LinkedBinaryTree<T>(
+        				root.right.element, 
+        				this.getRight().getLeft(), 
+        				this.getRight().getRight());
+        
+        return rightTree;
     }
     
     /**
@@ -107,7 +128,8 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
     @Override
     public int size() 
     {
-        // TODO: Implement this.
+       
+		return root.numChildren();
     }
     
     /**
@@ -117,7 +139,18 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
      */
      public int getHeight()
     {
-        // TODO: Implement this.
+        if(root.numChildren() == 0)
+        	return 1;
+        
+        int rightHeight = 0, leftHeight = 0;
+        
+        if(!getLeft().isEmpty())
+        	leftHeight = getLeft().getHeight() + 1;
+        
+        if(!getRight().isEmpty())
+        	rightHeight = getRight().getHeight() + 1;
+        
+        return leftHeight >= rightHeight ? leftHeight : rightHeight;
     }
     
     /**
@@ -128,7 +161,27 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
      */
     private int height(BinaryTreeNode<T> node) 
     {
-        // TODO: Implement this.
+    	int height = 1;
+    	BinaryTreeNode<T> traverse = root;
+        if(node.element == root.element)
+        	return height;
+        
+        while(node.element != traverse.element)
+        {
+        	if(traverse.left != null && node.element.compareTo(traverse.element) < 0)
+        		traverse = traverse.getLeft();
+        	
+        	if(traverse.right != null && node.element.compareTo(traverse.element) > 0)
+        		traverse = traverse.getRight();
+        	
+        	else
+        		return 0;
+        	
+        	
+        	height++;
+        }
+        	return height;
+        
     }
     
     /**
@@ -141,7 +194,10 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
     @Override
     public boolean contains(T targetElement) 
     {
-        // TODO: Implement this.
+        BinaryTreeNode<T> node = new BinaryTreeNode<T>(targetElement);
+        
+        return height(node) != 0;
+        
     }
     
     /**
@@ -158,7 +214,7 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
         BinaryTreeNode<T> current = findNode(targetElement, root);
         
         if (current == null)
-            throw new ElementNotFoundException("LinkedBinaryTree");
+            throw new ElementNotFoundException("LinkedBinarySearchTree");
         
         return (current.getElement());
     }
@@ -195,9 +251,19 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
      * @return a string representation of this binary tree
      */
     @Override
-    public String toString() 
+    public String toString()
     {
-        // TODO: Implement this.
+    	String display = "";
+    	
+    	if(root.left  != null)
+    		display += this.getLeft().toString();
+    	
+    	display += root.element.toString();
+    	
+    	if(root.right != null)
+    		display += this.getRight().toString();
+    	
+    	return display;
     }
 
     /**
@@ -222,7 +288,7 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
     @Override
     public Iterator<T> iteratorInOrder()
     {
-        ArrayUnorderedList<T> tempList = new ArrayUnorderedList<>();
+        ArrayUnorderedList<T> tempList = new ArrayUnorderedList<T>();
         inOrder(root, tempList);
         
         return new TreeIterator(tempList.iterator());
@@ -255,7 +321,9 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
     @Override
     public Iterator<T> iteratorPreOrder() 
     {
-        //TODO: Implement this.
+       ArrayUnorderedList<T> templist = new ArrayUnorderedList<T>();
+       preOrder(root, templist);
+       return templist.iterator();
     }
 
     /**
@@ -267,8 +335,14 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
     protected void preOrder(BinaryTreeNode<T> node, 
                             ArrayUnorderedList<T> tempList) 
     {
-        //TODO: Implement this.
-    }
+       
+    	if (node != null) 
+        { 
+    		tempList.addToRear(node.getElement());
+            preOrder(node.getLeft(), tempList);
+            preOrder(node.getRight(), tempList);
+   	   	}
+     }
 
     /**
      * Performs an postorder traversal on this binary tree by calling
@@ -304,8 +378,8 @@ public class LinkedBinaryTree<T> implements BinaryTreeADT<T>, Iterable<T>
     @Override
     public Iterator<T> iteratorLevelOrder() 
     {
-        ArrayUnorderedList<BinaryTreeNode<T>> nodes = new ArrayUnorderedList<>();
-        ArrayUnorderedList<T> tempList = new ArrayUnorderedList<>();
+        ArrayUnorderedList<BinaryTreeNode<T>> nodes = new ArrayUnorderedList<BinaryTreeNode<T>>();
+        ArrayUnorderedList<T> tempList = new ArrayUnorderedList<T>();
         BinaryTreeNode<T> current;
 
         nodes.addToRear(root);

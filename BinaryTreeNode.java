@@ -5,7 +5,7 @@
  * @author Lewis and Chase
  * @version 4.0
  */
-public class BinaryTreeNode<T>
+public class BinaryTreeNode<T extends Comparable<T>>
 {
     protected T element;
     protected BinaryTreeNode<T> left, right;
